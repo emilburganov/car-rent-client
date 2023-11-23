@@ -63,9 +63,35 @@ class AuthStore {
     async logout() {
         try {
             await AuthService.logout();
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorsResponse>;
+
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+
+            if (axiosError.response) {
+                if (axiosError.response.status === 422) {
+                    console.log(axiosError.response.data.message);
+                }
+            }
         } finally {
             this.setAuth(false);
-            localStorage.set("token", "");
+            localStorage.removeItem("token");
+        }
+    }
+
+    async me() {
+        try {
+            await AuthService.me();
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorsResponse>;
+
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+
+            console.log(axiosError);
         }
     }
 }

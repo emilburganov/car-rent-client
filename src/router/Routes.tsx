@@ -1,6 +1,6 @@
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
-import Private from "@/pages/Private";
+import Profile from "@/pages/Profile.tsx";
 import Register from "@/pages/Register";
 
 export const publicRoutes = [
@@ -10,5 +10,5 @@ export const publicRoutes = [
 ];
 
 export const privateRoutes = [
-    {path: "/private", element: <Private/>},
+    {path: "/profile", element: <Profile/>},
 ];

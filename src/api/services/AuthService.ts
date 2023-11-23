@@ -24,6 +24,10 @@ export default class AuthService {
     }
 
     static async logout(): Promise<AxiosResponse<MessageResponse>> {
-        return $api.post("/logout");
+        return $api.get("/logout");
+    }
+
+    static async me(): Promise<AxiosResponse<MessageResponse>> {
+        return $api.get("/me");
     }
 }

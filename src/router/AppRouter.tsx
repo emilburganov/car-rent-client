@@ -4,7 +4,7 @@ import {FC} from "react";
 import {privateRoutes, publicRoutes} from "./Routes";
 import {Route, Router} from "electron-router-dom";
 import Home from "@/pages/Home";
-import Private from "@/pages/Private";
+import Profile from "@/pages/Profile.tsx";
 
 const AppRouter: FC = observer(() => {
     const {authStore} = useStores();
@@ -17,7 +17,7 @@ const AppRouter: FC = observer(() => {
                         {privateRoutes.map((route) =>
                             <Route key={route.path} {...route}/>,
                         )}
-                        <Route path="*" element={<Private/>}/>,
+                        <Route path="*" element={<Profile/>}/>,
                     </>
                 }
             />
