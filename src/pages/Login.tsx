@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {Link, useNavigate} from "react-router-dom";
 import {ChangeEvent, FC, useState} from "react";
-import {Link as MuiLink} from "@mui/material";
+import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
 import {LoginCredentials} from "@/api/models/Credentials/LoginCredentials";
 import * as Yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup";
@@ -20,6 +20,9 @@ const Login: FC = () => {
         login: "",
         password: "",
     });
+
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
     const validationSchema = Yup.object({
         login: Yup.string().required().label("Login"),
@@ -37,8 +40,11 @@ const Login: FC = () => {
     const handleLogin = async () => {
         const response = await authStore.login(credentials);
 
-        if (response?.status === 200) {
+        if (response) {
             navigate("/private");
+        } else {
+            setSnackbarMessage("Invalid login or password.")
+            setSnackbarOpen(true);
         }
     };
 
@@ -63,7 +69,7 @@ const Login: FC = () => {
                 >
                     <TextField
                         {...register("login")}
-                        error={errors.login ?? ""}
+                        error={!!errors.login}
                         helperText={errors.login?.message}
                         onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             setCredentials({...credentials, login: event.target.value})
@@ -78,7 +84,7 @@ const Login: FC = () => {
                         autoFocus></TextField>
                     <TextField
                         {...register("password")}
-                        error={errors.password ?? ""}
+                        error={!!errors.password}
                         helperText={errors.password?.message}
                         onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             setCredentials({...credentials, password: event.target.value})
@@ -109,6 +115,15 @@ const Login: FC = () => {
                     </Grid>
                 </Box>
             </Box>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={2000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert severity="error">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

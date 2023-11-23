@@ -1,7 +1,7 @@
-import { makeAutoObservable } from "mobx";
-import { LoginCredentials } from "@/api/models/Credentials/LoginCredentials";
+import {makeAutoObservable} from "mobx";
+import {LoginCredentials} from "@/api/models/Credentials/LoginCredentials";
 import AuthService from "@/api/services/AuthService";
-import { RegisterCredentials } from "@/api/models/Credentials/RegisterCredentials";
+import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials";
 import {ErrorsResponse} from "@/api/models/Response/ErrorsResponse";
 import {AxiosError} from "axios";
 
@@ -32,7 +32,7 @@ class AuthStore {
 
             if (axiosError.response) {
                 if (axiosError.response.status === 401) {
-                    alert(axiosError.response.data.message)
+                    console.log(axiosError.response.data.message);
                 }
             }
         }
@@ -46,7 +46,17 @@ class AuthStore {
 
             return response;
         } catch (error: unknown) {
-            console.log(error);
+            const axiosError = error as AxiosError<ErrorsResponse>;
+
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+
+            if (axiosError.response) {
+                if (axiosError.response.status === 422) {
+                    console.log(axiosError.response.data.message);
+                }
+            }
         }
     }
 

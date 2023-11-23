@@ -5,38 +5,41 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {ChangeEvent, FC, useState} from "react";
-import {Link} from "react-router-dom";
-import {Link as MuiLink} from "@mui/material";
+import {Link, useNavigate} from "react-router-dom";
+import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
 import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials";
 import {useForm} from "react-hook-form";
-import {LoginCredentials} from "@/api/models/Credentials/LoginCredentials";
 import * as Yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup";
-
+import useStores from "@/hooks/useStores.tsx";
 
 const Register: FC = () => {
+    const navigate = useNavigate();
+    const {authStore} = useStores()
     const [credentials, setCredentials] = useState<RegisterCredentials>({
-        firstName: "",
-        lastName: "",
+        name: "",
+        surname: "",
         login: "",
         password: "",
         passwordConfirmation: ""
     });
 
+    const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+    const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
     const validationSchema = Yup.object({
-        firstName: Yup
+        name: Yup
             .string()
             .required()
             .min(3)
             .max(60)
-            .label("First Name"),
-        lastName: Yup
+            .label("Name"),
+        surname: Yup
             .string()
             .required()
             .min(3)
             .max(60)
-            .label("Last Name"),
+            .label("Surname"),
         login: Yup
             .string()
             .required()
@@ -54,8 +57,7 @@ const Register: FC = () => {
             .required()
             .label("Password Confirmation")
             .oneOf([Yup.ref("password")], "Password Confirmation field must match Password"),
-        })
-    ;
+    });
 
     const {
         register,
@@ -65,8 +67,15 @@ const Register: FC = () => {
         resolver: yupResolver(validationSchema),
     });
 
-    const handleRegister = () => {
+    const handleRegister = async () => {
+        const response = await authStore.register(credentials);
 
+        if (response) {
+            navigate("/private");
+        } else {
+            setSnackbarMessage("This login has been already taken.")
+            setSnackbarOpen(true);
+        }
     };
 
     return (
@@ -91,41 +100,41 @@ const Register: FC = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                {...register("firstName")}
-                                error={errors.firstName ?? ""}
-                                helperText={errors.login?.message}
+                                {...register("name")}
+                                error={!!errors.name}
+                                helperText={errors.name?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, firstName: event.target.value})
+                                    setCredentials({...credentials, name: event.target.value})
                                 }}
-                                value={credentials.firstName}
-                                name="firstName"
+                                value={credentials.name}
+                                name="name"
                                 required
                                 fullWidth
-                                id="firstName"
-                                label="First Name"
+                                id="name"
+                                label="Name"
                                 autoFocus
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                {...register("lastName")}
-                                error={errors.lastName ?? ""}
-                                helperText={errors.lastName?.message}
+                                {...register("surname")}
+                                error={!!errors.surname}
+                                helperText={errors.surname?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, lastName: event.target.value})
+                                    setCredentials({...credentials, surname: event.target.value})
                                 }}
-                                value={credentials.lastName}
+                                value={credentials.surname}
                                 required
                                 fullWidth
-                                id="lastName"
-                                label="Last Name"
-                                name="lastName"
+                                id="surname"
+                                label="Surname"
+                                name="surname"
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 {...register("login")}
-                                error={errors.login ?? ""}
+                                error={!!errors.login}
                                 helperText={errors.login?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                                     setCredentials({...credentials, login: event.target.value})
@@ -141,7 +150,7 @@ const Register: FC = () => {
                         <Grid item xs={12}>
                             <TextField
                                 {...register("password")}
-                                error={errors.password ?? ""}
+                                error={!!errors.password}
                                 helperText={errors.password?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                                     setCredentials({...credentials, password: event.target.value})
@@ -158,7 +167,7 @@ const Register: FC = () => {
                         <Grid item xs={12}>
                             <TextField
                                 {...register("passwordConfirmation")}
-                                error={errors.passwordConfirmation ?? ""}
+                                error={!!errors.passwordConfirmation}
                                 helperText={errors.passwordConfirmation?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
                                     setCredentials({...credentials, passwordConfirmation: event.target.value})
@@ -190,6 +199,15 @@ const Register: FC = () => {
                     </Grid>
                 </Box>
             </Box>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={2000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert severity="error">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };
