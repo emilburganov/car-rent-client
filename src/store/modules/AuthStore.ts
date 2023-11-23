@@ -4,9 +4,11 @@ import AuthService from "@/api/services/AuthService";
 import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials";
 import {ErrorsResponse} from "@/api/models/Response/ErrorsResponse";
 import {AxiosError} from "axios";
+import {IUser} from "@/api/models/IUser.ts";
 
 class AuthStore {
     isAuth = !!localStorage.getItem("token");
+    user = {} as IUser;
 
     constructor() {
         makeAutoObservable(this);
@@ -14,6 +16,10 @@ class AuthStore {
 
     setAuth(bool: boolean) {
         this.isAuth = bool;
+    }
+
+    setUser(user: IUser) {
+        this.user = user;
     }
 
     async login(credentials: LoginCredentials) {
@@ -83,7 +89,8 @@ class AuthStore {
 
     async me() {
         try {
-            await AuthService.me();
+            const response = await AuthService.me();
+            this.setUser(response.data);
         } catch (error: unknown) {
             const axiosError = error as AxiosError<ErrorsResponse>;
 

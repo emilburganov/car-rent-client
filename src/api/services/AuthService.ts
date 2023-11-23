@@ -4,6 +4,7 @@ import {RegisterCredentials} from "../models/Credentials/RegisterCredentials";
 import {MessageResponse} from "../models/Response/MessageResponse";
 import {TokenResponse} from "../models/Response/TokenResponse";
 import {AxiosResponse} from "axios";
+import {IUser} from "@/api/models/IUser.ts";
 
 export default class AuthService {
     static async login(credentials: LoginCredentials): Promise<AxiosResponse<TokenResponse>> {
@@ -27,7 +28,7 @@ export default class AuthService {
         return $api.get("/logout");
     }
 
-    static async me(): Promise<AxiosResponse<MessageResponse>> {
+    static async me(): Promise<AxiosResponse<IUser>> {
         return $api.get("/me");
     }
 }
