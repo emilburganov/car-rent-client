@@ -1,21 +1,21 @@
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import {ChangeEvent, FC, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
 import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials";
-import {useForm} from "react-hook-form";
-import * as Yup from "yup";
-import {yupResolver} from "@hookform/resolvers/yup";
 import useStores from "@/hooks/useStores.tsx";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import {ChangeEvent, FC, useState} from "react";
+import {useForm} from "react-hook-form";
+import {Link, useNavigate} from "react-router-dom";
+import * as Yup from "yup";
 
 const Register: FC = () => {
     const navigate = useNavigate();
-    const {authStore} = useStores()
+    const {authStore} = useStores();
     const [credentials, setCredentials] = useState<RegisterCredentials>({
         name: "",
         surname: "",
@@ -23,10 +23,10 @@ const Register: FC = () => {
         password: "",
         passwordConfirmation: ""
     });
-
+    
     const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
     const [snackbarMessage, setSnackbarMessage] = useState<string>("");
-
+    
     const validationSchema = Yup.object({
         name: Yup
             .string()
@@ -58,7 +58,7 @@ const Register: FC = () => {
             .label("Password Confirmation")
             .oneOf([Yup.ref("password")], "Password Confirmation field must match Password"),
     });
-
+    
     const {
         register,
         handleSubmit,
@@ -66,26 +66,27 @@ const Register: FC = () => {
     } = useForm<RegisterCredentials>({
         resolver: yupResolver(validationSchema),
     });
-
+    
     const handleRegister = async () => {
         const response = await authStore.register(credentials);
-
+        
         if (response) {
-            navigate("/private");
+            navigate("/profile");
+            await authStore.me();
         } else {
-            setSnackbarMessage("This login has been already taken.")
+            setSnackbarMessage("This login has been already taken.");
             setSnackbarOpen(true);
         }
     };
-
+    
     return (
         <Container component="main" maxWidth="sm">
             <Box
                 sx={{
                     marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                 }}
             >
                 <Typography component="h1" variant="h5">
@@ -104,7 +105,7 @@ const Register: FC = () => {
                                 error={!!errors.name}
                                 helperText={errors.name?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, name: event.target.value})
+                                    setCredentials({...credentials, name: event.target.value});
                                 }}
                                 value={credentials.name}
                                 name="name"
@@ -121,7 +122,7 @@ const Register: FC = () => {
                                 error={!!errors.surname}
                                 helperText={errors.surname?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, surname: event.target.value})
+                                    setCredentials({...credentials, surname: event.target.value});
                                 }}
                                 value={credentials.surname}
                                 required
@@ -137,7 +138,7 @@ const Register: FC = () => {
                                 error={!!errors.login}
                                 helperText={errors.login?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, login: event.target.value})
+                                    setCredentials({...credentials, login: event.target.value});
                                 }}
                                 value={credentials.login}
                                 required
@@ -153,7 +154,7 @@ const Register: FC = () => {
                                 error={!!errors.password}
                                 helperText={errors.password?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, password: event.target.value})
+                                    setCredentials({...credentials, password: event.target.value});
                                 }}
                                 value={credentials.password}
                                 required
@@ -170,7 +171,7 @@ const Register: FC = () => {
                                 error={!!errors.passwordConfirmation}
                                 helperText={errors.passwordConfirmation?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, passwordConfirmation: event.target.value})
+                                    setCredentials({...credentials, passwordConfirmation: event.target.value});
                                 }}
                                 value={credentials.passwordConfirmation}
                                 required

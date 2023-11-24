@@ -1,5 +1,5 @@
 import Header from "@/components/Header.tsx";
-import UserTable from "@/components/Profile/UserTable.tsx";
+import UserTable from "@/components/UserTable.tsx";
 import Grid from "@mui/material/Grid";
 
 const Profile = () => {
@@ -11,7 +11,7 @@ const Profile = () => {
                 spacing={0}
                 alignItems="center"
                 justifyContent="center"
-                sx={{minHeight: '100vh'}}
+                sx={{minHeight: "100vh"}}
             >
                 <Grid
                     display="flex"

@@ -1,20 +1,33 @@
 import useStores from "@/hooks/useStores";
-import {observer} from "mobx-react-lite";
-import {FC} from "react";
-import {privateRoutes, publicRoutes} from "./Routes";
-import {Route, Router} from "electron-router-dom";
 import Home from "@/pages/Home";
 import Profile from "@/pages/Profile.tsx";
+import {Route, Router} from "electron-router-dom";
+import {observer} from "mobx-react-lite";
+import {FC, useEffect} from "react";
+import {adminRoutes, clientRoutes, publicRoutes} from "./Routes";
+
+export enum Roles {
+    ADMIN = "Admin",
+    Client = "Client",
+}
 
 const AppRouter: FC = observer(() => {
     const {authStore} = useStores();
-
-    if (authStore.isAuth) {
+    
+    useEffect(() => {
+        if (authStore.isAuth) {
+            (async () => {
+                await authStore.me();
+            })();
+        }
+    }, []);
+    
+    if (authStore.isAuth && authStore.user.role === Roles.ADMIN) {
         return (
             <Router
                 main={
                     <>
-                        {privateRoutes.map((route) =>
+                        {adminRoutes.map((route) =>
                             <Route key={route.path} {...route}/>,
                         )}
                         <Route path="*" element={<Profile/>}/>,
@@ -23,7 +36,22 @@ const AppRouter: FC = observer(() => {
             />
         );
     }
-
+    
+    if (authStore.isAuth && authStore.user.role === Roles.Client) {
+        return (
+            <Router
+                main={
+                    <>
+                        {clientRoutes.map((route) =>
+                            <Route key={route.path} {...route}/>,
+                        )}
+                        <Route path="*" element={<Profile/>}/>,
+                    </>
+                }
+            />
+        );
+    }
+    
     return (
         <Router
             main={

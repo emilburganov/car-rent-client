@@ -1,40 +1,45 @@
-import * as React from "react";
-import {FC, useState} from "react";
+import useStores from "@/hooks/useStores.tsx";
+import {Roles} from "@/router/AppRouter";
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import {FC, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import useStores from "@/hooks/useStores.tsx";
 
-const pages = [
-    {label: "Profile", path: "/profile"}
+const publicPages = [
+    {label: "Profile", path: "/profile"},
+];
+
+const adminPages = [
+    {label: "Cars", path: "/cars"},
 ];
 
 const Header: FC = () => {
     const {authStore} = useStores();
     const navigate = useNavigate();
-
+    
     const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
-
+    
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
-
+    
     const handleLogout = async () => {
         await authStore.logout();
         navigate("/login");
-    }
-
+    };
+    
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -54,7 +59,7 @@ const Header: FC = () => {
                     >
                         CarRent
                     </Typography>
-
+                    
                     <Box sx={{flexGrow: 1, display: {xs: "flex", md: "none"}}}>
                         <IconButton
                             size="large"
@@ -84,7 +89,14 @@ const Header: FC = () => {
                                 display: {xs: "block", md: "none"},
                             }}
                         >
-                            {pages.map((page, index) => (
+                            {publicPages.map((page, index) => (
+                                <MenuItem key={index} onClick={handleCloseNavMenu}>
+                                    <Typography onClick={() => navigate(page.path)} textAlign="center">
+                                        {page.label}
+                                    </Typography>
+                                </MenuItem>
+                            ))}
+                            {authStore.user.role === Roles.ADMIN && adminPages.map((page, index) => (
                                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                                     <Typography onClick={() => navigate(page.path)} textAlign="center">
                                         {page.label}
@@ -110,7 +122,18 @@ const Header: FC = () => {
                         CarRent
                     </Typography>
                     <Box sx={{flexGrow: 1, display: {xs: "none", md: "flex"}}}>
-                        {pages.map((page, index) => (
+                        {publicPages.map((page, index) => (
+                            <Button
+                                key={index}
+                                onClick={handleCloseNavMenu}
+                                sx={{my: 2, color: "white", display: "block"}}
+                            >
+                                <Typography onClick={() => navigate(page.path)} textAlign="center">
+                                    {page.label}
+                                </Typography>
+                            </Button>
+                        ))}
+                        {authStore.user.role === Roles.ADMIN && adminPages.map((page, index) => (
                             <Button
                                 key={index}
                                 onClick={handleCloseNavMenu}
@@ -132,5 +155,5 @@ const Header: FC = () => {
             </Container>
         </AppBar>
     );
-}
+};
 export default Header;
