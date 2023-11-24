@@ -8,16 +8,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import {FC, useEffect, useState} from "react";
 
-function createData(
-    id: number,
-    login: string,
-    surname: string,
-    name: string,
-    role: string,
-) {
-    return {id, login, surname, name, role};
-}
-
 const UserTable: FC = () => {
     const {authStore} = useStores();
     const [isLoading, setLoading] = useState<boolean>(false);
@@ -34,15 +24,7 @@ const UserTable: FC = () => {
         return;
     }
     
-    const rows = [
-        createData(
-            authStore.user.id,
-            authStore.user.login,
-            authStore.user.surname,
-            authStore.user.name,
-            authStore.user.role,
-        ),
-    ];
+    const rows = [authStore.user];
     
     return (
         <TableContainer component={Paper}>

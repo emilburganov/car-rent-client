@@ -1,6 +1,9 @@
 import {ICar} from "@/api/models/ICar.ts";
+import useStores from "@/hooks/useStores.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import SearchIcon from "@mui/icons-material/Search";
+import {alpha, InputBase, styled} from "@mui/material";
 import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
@@ -10,49 +13,13 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {visuallyHidden} from "@mui/utils";
-import {ChangeEvent, FC, useMemo, useState} from "react";
-
-function createData(
-    id: number,
-    car_model: string,
-    year: number,
-    name: string,
-    consumption: number,
-    horsepower: number,
-    car_class: string,
-    salon: string,
-): ICar {
-    return {
-        id,
-        car_model,
-        year,
-        name,
-        consumption,
-        horsepower,
-        car_class,
-        salon,
-    };
-}
-
-const rows = [
-    createData(
-        1,
-        "car_model",
-        2023,
-        "name",
-        9.9,
-        100,
-        "car_class",
-        "salon"
-    ),
-];
+import {ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useMemo, useState} from "react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -61,6 +28,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] > a[orderBy]) {
         return 1;
     }
+    
     return 0;
 }
 
@@ -87,6 +55,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
         }
         return a[1] - b[1];
     });
+    
     return stabilizedThis.map((el) => el[0]);
 }
 
@@ -108,43 +77,43 @@ const headCells: readonly HeadCell[] = [
         id: "car_model",
         numeric: true,
         disablePadding: false,
-        label: "car_model",
+        label: "CarModel",
     },
     {
         id: "year",
         numeric: true,
         disablePadding: false,
-        label: "year",
+        label: "Year",
     },
     {
         id: "name",
         numeric: true,
         disablePadding: false,
-        label: "name",
+        label: "Name",
     },
     {
         id: "consumption",
         numeric: true,
         disablePadding: false,
-        label: "consumption",
+        label: "Consumption",
     },
     {
         id: "horsepower",
         numeric: true,
         disablePadding: false,
-        label: "horsepower",
+        label: "Horsepower",
     },
     {
         id: "car_class",
         numeric: true,
         disablePadding: false,
-        label: "car_class",
+        label: "CarClass",
     },
     {
         id: "salon",
         numeric: true,
         disablePadding: false,
-        label: "salon",
+        label: "Salon",
     },
 ];
 
@@ -206,11 +175,73 @@ const EnhancedTableHead: FC<EnhancedTableProps> = (props) => {
 };
 
 interface EnhancedTableToolbarProps {
-    numSelected: number;
+    setRows: Dispatch<SetStateAction<ICar[]>>;
+    selected: number[];
+    setSelected: Dispatch<SetStateAction<number[]>>;
 }
 
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-    const {numSelected} = props;
+const Search = styled("div")(({theme}) => ({
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    "&:hover": {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+        marginLeft: theme.spacing(3),
+        width: "auto",
+    },
+}));
+
+const SearchIconWrapper = styled("div")(({theme}) => ({
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({theme}) => ({
+    color: "inherit",
+    "& .MuiInputBase-input": {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create("width"),
+        width: "100%",
+        [theme.breakpoints.up("md")]: {
+            width: "20ch",
+        },
+    },
+}));
+
+const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
+    const {setRows, selected, setSelected} = props;
+    
+    const [search, setSearch] = useState("");
+    let numSelected = selected.length;
+    const {carStore} = useStores();
+    
+    const handleDelete = async () => {
+        selected.forEach((id) => {
+            carStore.destroy(id);
+        });
+        
+        setRows(carStore.cars.filter((car) => !selected.includes(car.id)));
+        setSelected([]);
+    };
+    
+    const handleSearch = async (event: ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+        
+        await carStore.index(event.target.value);
+        setRows(carStore.cars);
+    };
     
     return (
         <Toolbar
@@ -238,9 +269,20 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     Cars
                 </Typography>
             )}
+            <Search>
+                <SearchIconWrapper>
+                    <SearchIcon/>
+                </SearchIconWrapper>
+                <StyledInputBase
+                    value={search}
+                    onChange={handleSearch}
+                    placeholder="Search…"
+                    inputProps={{"aria-label": "search"}}
+                />
+            </Search>
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={handleDelete}>
                         <DeleteIcon/>
                     </IconButton>
                 </Tooltip>
@@ -253,18 +295,26 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             )}
         </Toolbar>
     );
-}
+};
 
 const AdminCarsTable: FC = () => {
     const [order, setOrder] = useState<Order>("asc");
     const [orderBy, setOrderBy] = useState<keyof ICar>("id");
-    const [selected, setSelected] = useState<readonly number[]>([]);
-    const [page, setPage] = useState(0);
-    const [dense, setDense] = useState(false);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [selected, setSelected] = useState<number[]>([]);
+    
+    const {carStore} = useStores();
+    let [rows, setRows] = useState<ICar[]>(carStore.cars);
+    
+    useEffect(() => {
+        (async () => {
+            await carStore.index();
+            setRows(carStore.cars);
+        })();
+    }, []);
     
     const handleRequestSort = (property: keyof ICar) => {
         const isAsc = orderBy === property && order === "asc";
+        
         setOrder(isAsc ? "desc" : "asc");
         setOrderBy(property);
     };
@@ -275,12 +325,13 @@ const AdminCarsTable: FC = () => {
             setSelected(newSelected);
             return;
         }
+        
         setSelected([]);
     };
     
     const handleClick = (id: number) => {
         const selectedIndex = selected.indexOf(id);
-        let newSelected: readonly number[] = [];
+        let newSelected: number[] = [];
         
         if (selectedIndex === -1) {
             newSelected = newSelected.concat(selected, id);
@@ -294,41 +345,29 @@ const AdminCarsTable: FC = () => {
                 selected.slice(selectedIndex + 1),
             );
         }
+        
         setSelected(newSelected);
     };
     
-    const handleChangePage = (newPage: number) => {
-        setPage(newPage);
-    };
-    
-    const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
     const isSelected = (id: number) => selected.indexOf(id) !== -1;
     
-    // Avoid a layout jump when reaching the last page with empty rows.
-    const emptyRows =
-        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-    
-    const visibleRows = useMemo(
-        () =>
-            stableSort(rows, getComparator(order, orderBy)).slice(
-                page * rowsPerPage,
-                page * rowsPerPage + rowsPerPage,
-            ),
-        [order, orderBy, page, rowsPerPage],
+    const sortedRows = useMemo(
+        () => stableSort(rows, getComparator(order, orderBy)),
+        [order, orderBy, rows],
     );
     
     return (
         <Box sx={{width: "100%"}}>
             <Paper sx={{width: "100%", mb: 2}}>
-                <EnhancedTableToolbar numSelected={selected.length}/>
+                <EnhancedTableToolbar
+                    setRows={setRows}
+                    selected={selected}
+                    setSelected={setSelected}
+                />
                 <TableContainer>
                     <Table
                         sx={{minWidth: 750}}
                         aria-labelledby="tableTitle"
-                        size={dense ? "small" : "medium"}
                     >
                         <EnhancedTableHead
                             numSelected={selected.length}
@@ -339,7 +378,7 @@ const AdminCarsTable: FC = () => {
                             rowCount={rows.length}
                         />
                         <TableBody>
-                            {visibleRows.map((row, index) => {
+                            {sortedRows.map((row, index) => {
                                 const isItemSelected = isSelected(row.id);
                                 const labelId = `enhanced-table-checkbox-${index}`;
                                 
@@ -381,27 +420,9 @@ const AdminCarsTable: FC = () => {
                                     </TableRow>
                                 );
                             })}
-                            {emptyRows > 0 && (
-                                <TableRow
-                                    style={{
-                                        height: (dense ? 33 : 53) * emptyRows,
-                                    }}
-                                >
-                                    <TableCell colSpan={6}/>
-                                </TableRow>
-                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
             </Paper>
         </Box>
     );

@@ -12,7 +12,7 @@ class RootStore {
     
     constructor() {
         this.authStore = new AuthStore();
-        this.carStore = new CarStore();
+        this.carStore = new CarStore(this);
     }
 }
 
