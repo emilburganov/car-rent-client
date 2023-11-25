@@ -61,6 +61,21 @@ class CarStore {
         }
     }
     
+    async update(id: number, credentials: CarCredentials) {
+        try {
+            const response = await CarService.update(id, credentials);
+            return response.data;
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorsResponse>;
+            
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+            
+            console.log(axiosError);
+        }
+    }
+    
     async destroy(id: number) {
         try {
             await CarService.destroy(id);

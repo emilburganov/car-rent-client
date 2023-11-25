@@ -22,6 +22,10 @@ export default class CarService {
         return $api.get<CarResponse>(`cars/${id}`);
     }
     
+    static async update(id: number, credentials: CarCredentials): Promise<AxiosResponse<MessageResponse>> {
+        return $api.patch<MessageResponse>(`cars/${id}`, credentials);
+    }
+    
     static async destroy(id: number): Promise<AxiosResponse<MessageResponse>> {
         return $api.delete<MessageResponse>(`cars/${id}`);
     }

@@ -114,9 +114,8 @@ const AdminEditCar: FC = () => {
         return <Loader/>;
     }
     
-    const handleAdd = async () => {
+    const handleUpdate = async () => {
         const response = await carStore.create(credentials);
-        
         
         if (response) {
             navigate("/cars");
@@ -140,7 +139,7 @@ const AdminEditCar: FC = () => {
                     <Box
                         component="form"
                         noValidate
-                        onSubmit={handleSubmit(handleAdd)}
+                        onSubmit={handleSubmit(handleUpdate)}
                         sx={{mt: 1}}
                     >
                         <FormControl
