@@ -110,7 +110,6 @@ const AdminAddCars: FC = () => {
     const handleAdd = async () => {
         const response = await carStore.create(credentials);
         
-        
         if (response) {
             navigate("/cars");
         }
