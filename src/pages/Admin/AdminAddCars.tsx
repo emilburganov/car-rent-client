@@ -28,7 +28,7 @@ const AdminAddCars: FC = () => {
     const [credentials, setCredentials] = useState<CarCredentials>({
         car_class_id: 1,
         car_model_id: 1,
-        consumption: 9.9,
+        consumption: 10,
         horsepower: 100,
         name: "",
         salon_id: 1,
