@@ -1,3 +1,4 @@
+import Loader from "@/components/UI/Loader.tsx";
 import useStores from "@/hooks/useStores.tsx";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -21,7 +22,7 @@ const UserTable: FC = () => {
     }, []);
     
     if (isLoading) {
-        return;
+        return <Loader/>;
     }
     
     const rows = [authStore.user];

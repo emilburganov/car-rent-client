@@ -1,16 +1,16 @@
-import AdminCarsTable from "@/components/Admin/AdminCarsTable.tsx";
+import UserTable from "@/components/Common/UserTable.tsx";
 import Header from "@/components/Header.tsx";
 import CenteredContainer from "@/components/UI/CenteredContainer.tsx";
 
-const AdminCars = () => {
+const Profile = () => {
     return (
         <div>
             <Header/>
             <CenteredContainer>
-                <AdminCarsTable/>
+                <UserTable/>
             </CenteredContainer>
         </div>
     );
 };
 
-export default AdminCars;
+export default Profile;

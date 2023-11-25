@@ -1,5 +1,5 @@
-import {LoginCredentials} from "@/api/models/Credentials/LoginCredentials";
-import useStores from "@/hooks/useStores";
+import {LoginCredentials} from "@/api/models/Credentials/LoginCredentials.ts";
+import useStores from "@/hooks/useStores.tsx";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
 import Box from "@mui/material/Box";
@@ -41,8 +41,8 @@ const Login: FC = () => {
         const response = await authStore.login(credentials);
         
         if (response) {
-            navigate("/profile");
             await authStore.me();
+            navigate("/profile");
         } else {
             setSnackbarMessage("Invalid login or password.");
             setSnackbarOpen(true);

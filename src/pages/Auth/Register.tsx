@@ -1,4 +1,4 @@
-import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials";
+import {RegisterCredentials} from "@/api/models/Credentials/RegisterCredentials.ts";
 import useStores from "@/hooks/useStores.tsx";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {Alert, Link as MuiLink, Snackbar} from "@mui/material";
@@ -71,8 +71,8 @@ const Register: FC = () => {
         const response = await authStore.register(credentials);
         
         if (response) {
-            navigate("/profile");
             await authStore.me();
+            navigate("/profile");
         } else {
             setSnackbarMessage("This login has been already taken.");
             setSnackbarOpen(true);

@@ -1,9 +1,9 @@
 import AdminAddCars from "@/pages/Admin/AdminAddCars.tsx";
 import AdminCars from "@/pages/Admin/AdminCars.tsx";
-import Home from "@/pages/Home";
-import Login from "@/pages/Login";
-import Profile from "@/pages/Profile";
-import Register from "@/pages/Register";
+import Login from "@/pages/Auth/Login.tsx";
+import Register from "@/pages/Auth/Register.tsx";
+import Home from "@/pages/Сommon/Home.tsx";
+import Profile from "@/pages/Сommon/Profile.tsx";
 
 export const publicRoutes = [
     {path: "/", element: <Home/>},

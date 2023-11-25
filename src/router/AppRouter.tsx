@@ -1,6 +1,6 @@
 import useStores from "@/hooks/useStores";
-import Home from "@/pages/Home";
-import Profile from "@/pages/Profile.tsx";
+import Home from "@/pages/Сommon/Home.tsx";
+import Profile from "@/pages/Сommon/Profile.tsx";
 import {Route, Router} from "electron-router-dom";
 import {observer} from "mobx-react-lite";
 import {FC, useEffect} from "react";
