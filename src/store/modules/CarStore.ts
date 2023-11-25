@@ -1,17 +1,14 @@
 import {ICar} from "@/api/models/ICar.ts";
 import {ErrorsResponse} from "@/api/models/Response/ErrorsResponse.ts";
 import CarService from "@/api/services/CarService.ts";
-import RootStore from "@/store/RootStore";
 import {AxiosError} from "axios";
 import {makeAutoObservable} from "mobx";
 
 class CarStore {
     cars = [] as ICar[];
-    private rootStore: RootStore;
     
-    constructor(rootStore: RootStore) {
+    constructor() {
         makeAutoObservable(this);
-        this.rootStore = rootStore;
     }
     
     setCars(cars: ICar[]) {

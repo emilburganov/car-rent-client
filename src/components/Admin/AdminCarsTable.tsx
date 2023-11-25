@@ -5,6 +5,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import {alpha, InputBase, styled} from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -20,6 +21,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {visuallyHidden} from "@mui/utils";
 import {ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useMemo, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -226,6 +228,7 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
     const [search, setSearch] = useState("");
     let numSelected = selected.length;
     const {carStore} = useStores();
+    const navigate = useNavigate();
     
     const handleDelete = async () => {
         selected.forEach((id) => {
@@ -269,6 +272,13 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
                     Cars
                 </Typography>
             )}
+            <Button
+                sx={{maxWidth: "fit-content", width: "100%"}}
+                variant="outlined"
+                onClick={() => navigate("/add-cars")}
+            >
+                Add Cars
+            </Button>
             <Search>
                 <SearchIconWrapper>
                     <SearchIcon/>
