@@ -26,12 +26,12 @@ import * as Yup from "yup";
 const AdminAddCars: FC = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState<CarCredentials>({
-        car_class_id: undefined,
-        car_model_id: undefined,
+        car_class_id: 1,
+        car_model_id: 1,
         consumption: 9.9,
         horsepower: 100,
         name: "",
-        salon_id: undefined,
+        salon_id: 1,
         year: 2023,
     });
     
