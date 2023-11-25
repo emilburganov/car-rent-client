@@ -20,7 +20,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {visuallyHidden} from "@mui/utils";
-import {ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useMemo, useState} from "react";
+import {ChangeEvent, Dispatch, FC, MouseEvent, SetStateAction, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -275,7 +275,7 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
             <Button
                 sx={{maxWidth: "fit-content", width: "100%"}}
                 variant="outlined"
-                onClick={() => navigate("/add-cars")}
+                onClick={() => navigate("/add-car")}
             >
                 Add Cars
             </Button>
@@ -308,6 +308,7 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
 };
 
 const AdminCarsTable: FC = () => {
+    const navigate = useNavigate();
     const [order, setOrder] = useState<Order>("asc");
     const [orderBy, setOrderBy] = useState<keyof ICar>("id");
     const [selected, setSelected] = useState<number[]>([]);
@@ -340,6 +341,12 @@ const AdminCarsTable: FC = () => {
     };
     
     const handleClick = (id: number) => {
+        navigate(`/edit-car/${id}`);
+    };
+    
+    const handleSelect = (event: MouseEvent<HTMLButtonElement>, id: number) => {
+        event.stopPropagation();
+        
         const selectedIndex = selected.indexOf(id);
         let newSelected: number[] = [];
         
@@ -367,7 +374,7 @@ const AdminCarsTable: FC = () => {
     );
     
     return (
-        <Box sx={{width: "100%"}}>
+        <Box>
             <Paper sx={{width: "100%", mb: 2}}>
                 <EnhancedTableToolbar
                     setRows={setRows}
@@ -394,8 +401,8 @@ const AdminCarsTable: FC = () => {
                                 
                                 return (
                                     <TableRow
-                                        hover
                                         onClick={() => handleClick(row.id)}
+                                        hover
                                         role="checkbox"
                                         aria-checked={isItemSelected}
                                         tabIndex={-1}
@@ -405,6 +412,9 @@ const AdminCarsTable: FC = () => {
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox
+                                                onClick={(event) => {
+                                                    handleSelect(event, row.id);
+                                                }}
                                                 color="primary"
                                                 checked={isItemSelected}
                                                 inputProps={{

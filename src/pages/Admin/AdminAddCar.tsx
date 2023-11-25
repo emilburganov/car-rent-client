@@ -23,7 +23,7 @@ import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
 
-const AdminAddCars: FC = () => {
+const AdminAddCar: FC = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState<CarCredentials>({
         car_class_id: 1,
@@ -38,10 +38,12 @@ const AdminAddCars: FC = () => {
     const validationSchema = Yup.object({
         car_class_id: Yup
             .number()
+            .typeError("CarClass is a required field")
             .required()
             .label("CarClass"),
         car_model_id: Yup
             .number()
+            .typeError("CarModel is a required field")
             .required()
             .label("CarModel"),
         consumption: Yup
@@ -66,6 +68,7 @@ const AdminAddCars: FC = () => {
             .label("Horsepower"),
         salon_id: Yup
             .number()
+            .typeError("Salon is a required field")
             .required()
             .label("Salon"),
         year: Yup
@@ -128,7 +131,7 @@ const AdminAddCars: FC = () => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Add Cars Form
+                        Add Car Form
                     </Typography>
                     <Box
                         component="form"
@@ -147,11 +150,9 @@ const AdminAddCars: FC = () => {
                             <Select
                                 {...register("car_model_id")}
                                 error={!!errors.car_model_id}
-                                helperText={errors.car_model_id?.message}
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_model_id: Number(event.target.value)});
                                 }}
-                                value={credentials.car_model_id}
                                 labelId="car-model-select-label"
                                 id="car-model-select"
                                 label="CarModel"
@@ -246,11 +247,9 @@ const AdminAddCars: FC = () => {
                             <Select
                                 {...register("car_class_id")}
                                 error={!!errors.car_class_id}
-                                helperText={errors.car_class_id?.message}
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_class_id: Number(event.target.value)});
                                 }}
-                                value={credentials.car_class_id}
                                 labelId="car-class-select-label"
                                 id="car-class-select"
                                 label="CarClass"
@@ -281,17 +280,18 @@ const AdminAddCars: FC = () => {
                             <Select
                                 required
                                 {...register("salon_id")}
-                                
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, salon_id: Number(event.target.value)});
                                 }}
-                                value={credentials.salon_id}
                                 labelId="salon-select-label"
                                 id="salon-select"
                                 label="Salon"
                             >
                                 {salonStore.salons.map((salon) =>
-                                    <MenuItem key={salon.id} value={salon.id}>
+                                    <MenuItem
+                                        key={salon.id}
+                                        value={salon.id}
+                                    >
                                         {salon.name}
                                     </MenuItem>
                                 )}
@@ -322,4 +322,4 @@ const AdminAddCars: FC = () => {
     );
 };
 
-export default AdminAddCars;
+export default AdminAddCar;

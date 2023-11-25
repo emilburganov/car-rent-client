@@ -31,9 +31,25 @@ class CarStore {
         }
     }
     
+    async show(id: number) {
+        try {
+            const response = await CarService.show(id);
+            return response.data;
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorsResponse>;
+            
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+            
+            console.log(axiosError);
+        }
+    }
+    
     async create(credentials: CarCredentials) {
         try {
-            return await CarService.create(credentials);
+            const response = await CarService.create(credentials);
+            return response.data;
         } catch (error: unknown) {
             const axiosError = error as AxiosError<ErrorsResponse>;
             

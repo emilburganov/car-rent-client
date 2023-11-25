@@ -17,6 +17,10 @@ export default class CarService {
         return $api.post<ICar>(`cars`, credentials);
     }
     
+    static async show(id: number): Promise<AxiosResponse<ICar>> {
+        return $api.get<ICar>(`cars/${id}`);
+    }
+    
     static async destroy(id: number): Promise<AxiosResponse<MessageResponse>> {
         return $api.delete<MessageResponse>(`cars/${id}`);
     }

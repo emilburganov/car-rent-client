@@ -1,5 +1,6 @@
-import AdminAddCars from "@/pages/Admin/AdminAddCars.tsx";
+import AdminAddCar from "@/pages/Admin/AdminAddCar.tsx";
 import AdminCars from "@/pages/Admin/AdminCars.tsx";
+import AdminEditCar from "@/pages/Admin/AdminEditCar.tsx";
 import Login from "@/pages/Auth/Login.tsx";
 import Register from "@/pages/Auth/Register.tsx";
 import Home from "@/pages/Сommon/Home.tsx";
@@ -18,5 +19,6 @@ export const clientRoutes = [
 export const adminRoutes = [
     {path: "/profile", element: <Profile/>},
     {path: "/cars", element: <AdminCars/>},
-    {path: "/add-cars", element: <AdminAddCars/>},
+    {path: "/add-car", element: <AdminAddCar/>},
+    {path: "/edit-car/:id", element: <AdminEditCar/>},
 ];

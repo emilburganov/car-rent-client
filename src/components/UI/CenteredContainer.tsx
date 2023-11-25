@@ -12,7 +12,14 @@ const CenteredContainer: FC<CenteredContainerProps> = ({children}) => {
             spacing={0}
             alignItems="center"
             justifyContent="center"
-            sx={{minHeight: "100vh"}}
+            sx={{
+                maxWidth: "1440px",
+                margin: "0 auto",
+                minHeight: "100vh",
+                width: "100%",
+                display: "flex",
+                overflowX: "auto"
+            }}
         >
             <Grid
                 display="flex"
