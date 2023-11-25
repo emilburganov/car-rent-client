@@ -25,6 +25,8 @@ import * as Yup from "yup";
 
 const AdminEditCar: FC = () => {
     const {id} = useParams();
+    const [isLoading, setLoading] = useState<boolean>(false);
+    
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState<CarCredentials>({
         car_class_id: 1,
@@ -35,6 +37,26 @@ const AdminEditCar: FC = () => {
         salon_id: 1,
         year: 2023,
     });
+    
+    
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            
+            await carModelStore.index();
+            await carClassStore.index();
+            await salonStore.index();
+            
+            const response = await carStore.show(Number(id));
+            if (response) {
+                setCredentials((({id, ...response}) => response)(response));
+            }
+            
+            setTimeout(() => {
+                setLoading(false);
+            }, 1000);
+        })();
+    }, []);
     
     const validationSchema = Yup.object({
         car_class_id: Yup
@@ -89,7 +111,10 @@ const AdminEditCar: FC = () => {
         resolver: yupResolver(validationSchema),
     });
     
-    const [isLoading, setLoading] = useState<boolean>(false);
+    if (isLoading) {
+        return <Loader/>;
+    }
+    
     const {
         carStore,
         carModelStore,
@@ -97,25 +122,8 @@ const AdminEditCar: FC = () => {
         salonStore
     } = useStores();
     
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            
-            const response = await carStore.show(Number(id));
-            if (response) {
-                setCredentials((({id, ...response}) => response)(response));
-            }
-            
-            setLoading(false);
-        })();
-    }, []);
-    
-    if (isLoading) {
-        return <Loader/>;
-    }
-    
     const handleUpdate = async () => {
-        const response = await carStore.create(credentials);
+        const response = await carStore.update(Number(id), credentials);
         
         if (response) {
             navigate("/cars");
@@ -156,12 +164,16 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_model_id: Number(event.target.value)});
                                 }}
+                                value={credentials.car_model_id}
                                 labelId="car-model-select-label"
                                 id="car-model-select"
                                 label="CarModel"
                             >
                                 {carModelStore.carModels.map((carModel) =>
-                                    <MenuItem key={carModel.id} value={carModel.id}>
+                                    <MenuItem
+                                        key={carModel.id}
+                                        value={carModel.id}
+                                    >
                                         {carModel.name}
                                     </MenuItem>
                                 )}
@@ -253,6 +265,7 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_class_id: Number(event.target.value)});
                                 }}
+                                value={credentials.car_class_id}
                                 labelId="car-class-select-label"
                                 id="car-class-select"
                                 label="CarClass"
@@ -286,6 +299,7 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, salon_id: Number(event.target.value)});
                                 }}
+                                value={credentials.salon_id}
                                 labelId="salon-select-label"
                                 id="salon-select"
                                 label="Salon"
