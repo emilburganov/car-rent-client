@@ -82,7 +82,9 @@ const Login: FC = () => {
                         id="login"
                         label="Login"
                         name="login"
-                        autoFocus></TextField>
+                        type="text"
+                        autoFocus
+                    />
                     <TextField
                         {...register("password")}
                         error={!!errors.password}
@@ -110,7 +112,7 @@ const Login: FC = () => {
                     <Grid item>
                         <Link to="/register">
                             <MuiLink variant="body2">
-                                {"Don't have an account? Register"}
+                                Don't have an account? Register
                             </MuiLink>
                         </Link>
                     </Grid>

@@ -146,7 +146,7 @@ const Header: FC = () => {
                         ))}
                     </Box>
                     <Button
-                        variant="contained"
+                        variant="outlined"
                         onClick={handleLogout}
                     >
                         Logout
