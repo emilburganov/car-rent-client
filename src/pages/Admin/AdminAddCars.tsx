@@ -87,6 +87,7 @@ const AdminAddCars: FC = () => {
     
     const [isLoading, setLoading] = useState<boolean>(false);
     const {
+        carStore,
         carModelStore,
         carClassStore,
         salonStore
@@ -106,8 +107,12 @@ const AdminAddCars: FC = () => {
         return <Loader/>;
     }
     
-    const handleAdd = () => {
-    
+    const handleAdd = async () => {
+        const response = await carStore.create(credentials);
+        
+        if (response) {
+            navigate("/cars");
+        }
     };
     
     return (

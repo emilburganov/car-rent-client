@@ -1,9 +1,9 @@
 export interface CarCredentials {
-    car_model_id: number | undefined,
+    car_model_id: number,
     year: number,
     name: string,
     consumption: number,
     horsepower: number,
-    car_class_id: number | undefined,
-    salon_id: number | undefined,
+    car_class_id: number,
+    salon_id: number,
 }

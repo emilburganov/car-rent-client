@@ -1,3 +1,4 @@
+import {CarCredentials} from "@/api/models/Credentials/CarCredentials.ts";
 import {ICar} from "@/api/models/ICar.ts";
 import {MessageResponse} from "@/api/models/Response/MessageResponse.ts";
 import {AxiosResponse} from "axios";
@@ -10,6 +11,10 @@ export default class CarService {
                 search
             },
         });
+    }
+    
+    static async create(credentials: CarCredentials): Promise<AxiosResponse<ICar>> {
+        return $api.post<ICar>(`cars`, credentials);
     }
     
     static async destroy(id: number): Promise<AxiosResponse<MessageResponse>> {

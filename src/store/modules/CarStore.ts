@@ -1,3 +1,4 @@
+import {CarCredentials} from "@/api/models/Credentials/CarCredentials.ts";
 import {ICar} from "@/api/models/ICar.ts";
 import {ErrorsResponse} from "@/api/models/Response/ErrorsResponse.ts";
 import CarService from "@/api/services/CarService.ts";
@@ -19,6 +20,20 @@ class CarStore {
         try {
             const response = await CarService.index(search);
             this.setCars(response.data);
+        } catch (error: unknown) {
+            const axiosError = error as AxiosError<ErrorsResponse>;
+            
+            if (axiosError.message == "Network Error") {
+                return;
+            }
+            
+            console.log(axiosError);
+        }
+    }
+    
+    async create(credentials: CarCredentials) {
+        try {
+            return await CarService.create(credentials);
         } catch (error: unknown) {
             const axiosError = error as AxiosError<ErrorsResponse>;
             
