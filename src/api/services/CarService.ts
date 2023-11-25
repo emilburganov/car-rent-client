@@ -1,5 +1,6 @@
 import {CarCredentials} from "@/api/models/Credentials/CarCredentials.ts";
 import {ICar} from "@/api/models/ICar.ts";
+import {CarResponse} from "@/api/models/Response/CarResponse.ts";
 import {MessageResponse} from "@/api/models/Response/MessageResponse.ts";
 import {AxiosResponse} from "axios";
 import $api from "../http/index";
@@ -17,8 +18,8 @@ export default class CarService {
         return $api.post<ICar>(`cars`, credentials);
     }
     
-    static async show(id: number): Promise<AxiosResponse<ICar>> {
-        return $api.get<ICar>(`cars/${id}`);
+    static async show(id: number): Promise<AxiosResponse<CarResponse>> {
+        return $api.get<CarResponse>(`cars/${id}`);
     }
     
     static async destroy(id: number): Promise<AxiosResponse<MessageResponse>> {

@@ -25,7 +25,6 @@ import * as Yup from "yup";
 
 const AdminEditCar: FC = () => {
     const {id} = useParams();
-    
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState<CarCredentials>({
         car_class_id: 1,
@@ -101,7 +100,12 @@ const AdminEditCar: FC = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
+            
             const response = await carStore.show(Number(id));
+            if (response) {
+                setCredentials((({id, ...response}) => response)(response));
+            }
+            
             setLoading(false);
         })();
     }, []);
