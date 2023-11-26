@@ -23,6 +23,7 @@ export default class RentService {
     }
     
     static async update(id: number, credentials: RentCredentials): Promise<AxiosResponse<MessageResponse>> {
+        console.log(credentials.start);
         return $api.patch<MessageResponse>(`rentals/${id}`, credentials);
     }
     

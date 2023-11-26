@@ -46,7 +46,12 @@ const AdminEditRent: FC = () => {
             
             const response = await rentStore.show(Number(id));
             if (response) {
-                setCredentials((({id, ...response}) => response)(response));
+                setCredentials({
+                    car_id: response.car_id,
+                    user_id: response.user_id,
+                    start: dayjs(response.start),
+                    end: dayjs(response.end),
+                });
             }
             
             await carStore.index();
@@ -85,13 +90,22 @@ const AdminEditRent: FC = () => {
         resolver: yupResolver(validationSchema),
     });
     
-    const [dateError, setDateError] = useState<boolean>(false);
+    const [endDateError, setEndDateError] = useState<boolean>(false);
+    const [startDateError, setStartDateError] = useState<boolean>(false);
     
     if (isLoading) {
         return <Loader/>;
     }
     
     const handleUpdate = async () => {
+        if (startDateError || endDateError) {
+            return;
+        }
+        
+        credentials.start = credentials.start?.add(3, "hour");
+        credentials.end = credentials.end?.add(3, "hour");
+        console.log(credentials.start);
+        
         const response = await rentStore.update(Number(id), credentials);
         
         if (response) {
@@ -133,6 +147,7 @@ const AdminEditRent: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_id: Number(event.target.value)});
                                 }}
+                                defaultValue={credentials.car_id}
                                 labelId="car-select-label"
                                 id="car-select"
                                 label="Car"
@@ -163,6 +178,7 @@ const AdminEditRent: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, user_id: Number(event.target.value)});
                                 }}
+                                defaultValue={credentials.user_id}
                                 labelId="user-select-label"
                                 id="user-select"
                                 label="Client"
@@ -188,13 +204,22 @@ const AdminEditRent: FC = () => {
                             fullWidth
                         >
                             <DatePicker
+                                slotProps={{
+                                    textField: {
+                                        fullWidth: true,
+                                        variant: "outlined",
+                                        error: startDateError,
+                                        helperText: startDateError && "Start Date must be after now",
+                                    },
+                                }}
                                 {...register("start")}
-                                value={credentials.start}
+                                value={dayjs(credentials.start)}
                                 onChange={(newValue) =>
                                     setCredentials({...credentials, start: newValue})}
                                 disablePast
                                 label="Start Date"
-                                onAccept={() => setDateError(false)}
+                                onAccept={() => setStartDateError(false)}
+                                onError={() => setStartDateError(true)}
                             />
                             {!!errors.start &&
 								<FormHelperText error>
@@ -206,26 +231,25 @@ const AdminEditRent: FC = () => {
                             error={!!errors.end}
                             margin="normal"
                             fullWidth
-                        
                         >
                             <DatePicker
                                 slotProps={{
                                     textField: {
                                         fullWidth: true,
                                         variant: "outlined",
-                                        error: dateError,
-                                        helperText: dateError && "End Date must be after Start Date",
+                                        error: endDateError,
+                                        helperText: endDateError && "End Date must be after Start Date",
                                     },
                                 }}
                                 {...register("end")}
-                                value={credentials.end}
+                                value={dayjs(credentials.end)}
                                 onChange={(newValue) =>
                                     setCredentials({...credentials, end: newValue})}
                                 disablePast
                                 minDate={credentials.start}
                                 label="End Date"
-                                onAccept={() => setDateError(false)}
-                                onError={() => setDateError(true)}
+                                onAccept={() => setEndDateError(false)}
+                                onError={() => setEndDateError(true)}
                             />
                             {!!errors.end &&
 								<FormHelperText error>

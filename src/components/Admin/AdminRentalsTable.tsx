@@ -229,7 +229,6 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
         setRows(rentStore.rentals);
     };
     
-    
     return (
         <Toolbar
             sx={{
