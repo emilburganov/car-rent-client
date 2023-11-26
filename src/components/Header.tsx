@@ -20,6 +20,7 @@ const publicPages = [
 
 const adminPages = [
     {label: "Cars", path: "/cars"},
+    {label: "Rentals", path: "/rentals"},
 ];
 
 const Header: FC = () => {

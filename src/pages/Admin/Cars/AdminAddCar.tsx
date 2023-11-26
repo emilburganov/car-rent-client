@@ -1,5 +1,5 @@
 import {CarCredentials} from "@/api/models/Credentials/CarCredentials.ts";
-import CenteredContainer from "@/components/UI/CenteredContainer";
+import CenteredContainer from "@/components/UI/CenteredContainer.tsx";
 import Loader from "@/components/UI/Loader.tsx";
 import useStores from "@/hooks/useStores.tsx";
 import {yupResolver} from "@hookform/resolvers/yup";
@@ -20,13 +20,10 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {ChangeEvent, FC, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
 
-const AdminEditCar: FC = () => {
-    const {id} = useParams();
-    const [isLoading, setLoading] = useState<boolean>(false);
-    
+const AdminAddCar: FC = () => {
     const navigate = useNavigate();
     const [credentials, setCredentials] = useState<CarCredentials>({
         car_class_id: 1,
@@ -37,24 +34,6 @@ const AdminEditCar: FC = () => {
         salon_id: 1,
         year: 2023,
     });
-    
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            
-            const response = await carStore.show(Number(id));
-            if (response) {
-                setCredentials((({id, ...response}) => response)(response));
-            }
-            
-            await carModelStore.index();
-            await carClassStore.index();
-            await salonStore.index();
-            
-            alert(JSON.stringify(credentials, null, 4));
-            setLoading(false);
-        })();
-    }, []);
     
     const validationSchema = Yup.object({
         car_class_id: Yup
@@ -109,10 +88,7 @@ const AdminEditCar: FC = () => {
         resolver: yupResolver(validationSchema),
     });
     
-    if (isLoading) {
-        return <Loader/>;
-    }
-    
+    const [isLoading, setLoading] = useState<boolean>(false);
     const {
         carStore,
         carModelStore,
@@ -120,8 +96,23 @@ const AdminEditCar: FC = () => {
         salonStore
     } = useStores();
     
-    const handleUpdate = async () => {
-        const response = await carStore.update(Number(id), credentials);
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            await carModelStore.index();
+            await carClassStore.index();
+            await salonStore.index();
+            setLoading(false);
+        })();
+    }, []);
+    
+    if (isLoading) {
+        return <Loader/>;
+    }
+    
+    const handleAdd = async () => {
+        const response = await carStore.create(credentials);
+        
         
         if (response) {
             navigate("/cars");
@@ -140,12 +131,12 @@ const AdminEditCar: FC = () => {
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Edit Car Form
+                        Add Car Form
                     </Typography>
                     <Box
                         component="form"
                         noValidate
-                        onSubmit={handleSubmit(handleUpdate)}
+                        onSubmit={handleSubmit(handleAdd)}
                         sx={{mt: 1}}
                     >
                         <FormControl
@@ -162,16 +153,12 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_model_id: Number(event.target.value)});
                                 }}
-                                value={credentials.car_model_id}
                                 labelId="car-model-select-label"
                                 id="car-model-select"
                                 label="CarModel"
                             >
                                 {carModelStore.carModels.map((carModel) =>
-                                    <MenuItem
-                                        key={carModel.id}
-                                        value={carModel.id}
-                                    >
+                                    <MenuItem key={carModel.id} value={carModel.id}>
                                         {carModel.name}
                                     </MenuItem>
                                 )}
@@ -263,7 +250,6 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, car_class_id: Number(event.target.value)});
                                 }}
-                                value={credentials.car_class_id}
                                 labelId="car-class-select-label"
                                 id="car-class-select"
                                 label="CarClass"
@@ -297,7 +283,6 @@ const AdminEditCar: FC = () => {
                                 onChange={(event: SelectChangeEvent<HTMLSelectElement>) => {
                                     setCredentials({...credentials, salon_id: Number(event.target.value)});
                                 }}
-                                value={credentials.salon_id}
                                 labelId="salon-select-label"
                                 id="salon-select"
                                 label="Salon"
@@ -321,7 +306,7 @@ const AdminEditCar: FC = () => {
                             variant="contained"
                             sx={{mt: 3, mb: 2}}
                         >
-                            Edit
+                            Add
                         </Button>
                         <Grid item>
                             <Link to="/cars">
@@ -337,4 +322,4 @@ const AdminEditCar: FC = () => {
     );
 };
 
-export default AdminEditCar;
+export default AdminAddCar;

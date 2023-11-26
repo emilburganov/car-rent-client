@@ -1,16 +1,17 @@
-import AdminCarsTable from "@/components/Admin/AdminCarsTable.tsx";
+import AdminRentalsTable from "@/components/Admin/AdminRentalsTable.tsx";
 import Header from "@/components/Header.tsx";
 import CenteredContainer from "@/components/UI/CenteredContainer.tsx";
+import {FC} from "react";
 
-const AdminCars = () => {
+const AdminRentals: FC = () => {
     return (
         <div>
             <Header/>
             <CenteredContainer>
-                <AdminCarsTable/>
+                <AdminRentalsTable/>
             </CenteredContainer>
         </div>
     );
 };
 
-export default AdminCars;
+export default AdminRentals;
