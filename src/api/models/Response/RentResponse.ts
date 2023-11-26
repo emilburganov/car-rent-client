@@ -1,7 +1,9 @@
+import {Dayjs} from "dayjs";
+
 export interface RentResponse {
     id: number,
-    car_id: string,
-    user_id: string,
-    start: string,
-    end: string,
+    car_id: number,
+    user_id: number,
+    start: Dayjs | null,
+    end: Dayjs | null,
 }

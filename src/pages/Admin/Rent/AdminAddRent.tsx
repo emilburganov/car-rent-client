@@ -52,6 +52,7 @@ const AdminAddRent: FC = () => {
             .required()
             .label("End Date"),
     });
+    
     const {
         register,
         handleSubmit,
