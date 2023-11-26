@@ -19,6 +19,7 @@ const Register: FC = () => {
     const [credentials, setCredentials] = useState<RegisterCredentials>({
         name: "",
         surname: "",
+        patronymic: "",
         login: "",
         password: "",
         passwordConfirmation: ""
@@ -40,6 +41,12 @@ const Register: FC = () => {
             .min(3)
             .max(60)
             .label("Surname"),
+        patronymic: Yup
+            .string()
+            .required()
+            .min(3)
+            .max(60)
+            .label("Patronymic"),
         login: Yup
             .string()
             .required()
@@ -101,6 +108,22 @@ const Register: FC = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
+                                {...register("surname")}
+                                error={!!errors.surname}
+                                helperText={errors.surname?.message}
+                                onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                                    setCredentials({...credentials, surname: event.target.value});
+                                }}
+                                value={credentials.surname}
+                                required
+                                fullWidth
+                                id="surname"
+                                label="Surname"
+                                name="surname"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
                                 {...register("name")}
                                 error={!!errors.name}
                                 helperText={errors.name?.message}
@@ -116,20 +139,20 @@ const Register: FC = () => {
                                 autoFocus
                             />
                         </Grid>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12}>
                             <TextField
-                                {...register("surname")}
-                                error={!!errors.surname}
-                                helperText={errors.surname?.message}
+                                {...register("patronymic")}
+                                error={!!errors.patronymic}
+                                helperText={errors.patronymic?.message}
                                 onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                                    setCredentials({...credentials, surname: event.target.value});
+                                    setCredentials({...credentials, patronymic: event.target.value});
                                 }}
-                                value={credentials.surname}
+                                value={credentials.patronymic}
                                 required
                                 fullWidth
-                                id="surname"
-                                label="Surname"
-                                name="surname"
+                                id="patronymic"
+                                label="Patronymic"
+                                name="patronymic"
                             />
                         </Grid>
                         <Grid item xs={12}>

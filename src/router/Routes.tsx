@@ -7,6 +7,7 @@ import AdminRentals from "@/pages/Admin/Rentals/AdminRentals.tsx";
 import AdminUsers from "@/pages/Admin/Users/AdminUsers.tsx";
 import Login from "@/pages/Auth/Login.tsx";
 import Register from "@/pages/Auth/Register.tsx";
+import ClientRentals from "@/pages/Client/Rentals/ClientRentals.tsx";
 import Home from "@/pages/Сommon/Home.tsx";
 import Profile from "@/pages/Сommon/Profile.tsx";
 
@@ -18,6 +19,7 @@ export const publicRoutes = [
 
 export const clientRoutes = [
     {path: "/profile", element: <Profile/>},
+    {path: "/rentals", element: <ClientRentals/>},
 ];
 
 export const adminRoutes = [

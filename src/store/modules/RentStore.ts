@@ -16,9 +16,9 @@ class RentStore {
         this.rentals = rentals;
     }
     
-    async index(search: string = "") {
+    async index() {
         try {
-            const response = await RentService.index(search);
+            const response = await RentService.index();
             this.setRentals(response.data);
         } catch (error: unknown) {
             const axiosError = error as AxiosError<ErrorsResponse>;

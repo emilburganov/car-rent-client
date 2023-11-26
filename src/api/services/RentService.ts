@@ -6,12 +6,8 @@ import {AxiosResponse} from "axios";
 import $api from "../http/index";
 
 export default class RentService {
-    static async index(search: string): Promise<AxiosResponse<IRent[]>> {
-        return $api.get<IRent[]>(`rentals`, {
-            params: {
-                search
-            },
-        });
+    static async index(): Promise<AxiosResponse<IRent[]>> {
+        return $api.get<IRent[]>(`rentals`);
     }
     
     static async create(credentials: RentCredentials): Promise<AxiosResponse<IRent>> {

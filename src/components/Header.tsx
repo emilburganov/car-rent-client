@@ -24,6 +24,10 @@ const adminPages = [
     {label: "Users", path: "/users"},
 ];
 
+const clientPages = [
+    {label: "Rentals", path: "/rentals"},
+];
+
 const Header: FC = () => {
     const {authStore} = useStores();
     const navigate = useNavigate();
@@ -135,17 +139,30 @@ const Header: FC = () => {
                                 </Typography>
                             </Button>
                         ))}
-                        {authStore.user.role === Roles.ADMIN && adminPages.map((page, index) => (
-                            <Button
-                                key={index}
-                                onClick={handleCloseNavMenu}
-                                sx={{my: 2, color: "white", display: "block"}}
-                            >
-                                <Typography onClick={() => navigate(page.path)} textAlign="center">
-                                    {page.label}
-                                </Typography>
-                            </Button>
-                        ))}
+                        {authStore.user.role === Roles.ADMIN &&
+                            adminPages.map((page, index) => (
+                                <Button
+                                    key={index}
+                                    onClick={handleCloseNavMenu}
+                                    sx={{my: 2, color: "white", display: "block"}}
+                                >
+                                    <Typography onClick={() => navigate(page.path)} textAlign="center">
+                                        {page.label}
+                                    </Typography>
+                                </Button>
+                            ))}
+                        {authStore.user.role === Roles.CLIENT &&
+                            clientPages.map((page, index) => (
+                                <Button
+                                    key={index}
+                                    onClick={handleCloseNavMenu}
+                                    sx={{my: 2, color: "white", display: "block"}}
+                                >
+                                    <Typography onClick={() => navigate(page.path)} textAlign="center">
+                                        {page.label}
+                                    </Typography>
+                                </Button>
+                            ))}
                     </Box>
                     <Button
                         variant="outlined"

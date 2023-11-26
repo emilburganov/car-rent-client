@@ -36,6 +36,7 @@ const UserTable: FC = () => {
                         <TableCell align="right">Login</TableCell>
                         <TableCell align="right">Surname</TableCell>
                         <TableCell align="right">Name</TableCell>
+                        <TableCell align="right">Patronymic</TableCell>
                         <TableCell align="right">Role</TableCell>
                     </TableRow>
                 </TableHead>
@@ -51,6 +52,7 @@ const UserTable: FC = () => {
                             <TableCell align="right">{row.login}</TableCell>
                             <TableCell align="right">{row.surname}</TableCell>
                             <TableCell align="right">{row.name}</TableCell>
+                            <TableCell align="right">{row.patronymic}</TableCell>
                             <TableCell align="right">{row.role}</TableCell>
                         </TableRow>
                     ))}

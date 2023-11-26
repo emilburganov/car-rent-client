@@ -9,7 +9,7 @@ import {adminRoutes, clientRoutes, publicRoutes} from "./Routes";
 
 export enum Roles {
     ADMIN = "Admin",
-    Client = "Client",
+    CLIENT = "Client",
 }
 
 const AppRouter: FC = observer(() => {
@@ -45,7 +45,7 @@ const AppRouter: FC = observer(() => {
         );
     }
     
-    if (authStore.isAuth && authStore.user.role === Roles.Client) {
+    if (authStore.isAuth && authStore.user.role === Roles.CLIENT) {
         return (
             <Router
                 main={
