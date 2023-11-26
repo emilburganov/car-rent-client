@@ -319,6 +319,42 @@ const AdminCarsTable: FC = () => {
     let [rows, setRows] = useState<ICar[]>(carStore.cars);
     const [isLoading, setLoading] = useState<boolean>(false);
     
+    const handleRequestSort = (property: keyof ICar) => {
+        const isAsc = orderBy === property && order === "asc";
+        
+        setOrder(isAsc ? "desc" : "asc");
+        setOrderBy(property);
+    };
+    
+    const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.checked) {
+            const newSelected = rows.map((n) => n.id);
+            setSelected(newSelected);
+            return;
+        }
+        
+        setSelected([]);
+    };
+    
+    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+    
+    const sortedRows = useMemo(
+        () => stableSort(rows, getComparator(order, orderBy)),
+        [order, orderBy, rows],
+    );
+    
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            await carStore.index();
+            setRows(carStore.cars);
+            setLoading(false);
+        })();
+    }, []);
+    
+    if (isLoading) {
+        return <Loader/>;
+    }
     
     const handleClick = (id: number) => {
         navigate(`/edit-car/${id}`);
@@ -345,44 +381,6 @@ const AdminCarsTable: FC = () => {
         
         setSelected(newSelected);
     };
-    
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
-    
-    const sortedRows = useMemo(
-        () => stableSort(rows, getComparator(order, orderBy)),
-        [order, orderBy, rows],
-    );
-    
-    const handleRequestSort = (property: keyof ICar) => {
-        const isAsc = orderBy === property && order === "asc";
-        
-        setOrder(isAsc ? "desc" : "asc");
-        setOrderBy(property);
-    };
-    
-    const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.checked) {
-            const newSelected = rows.map((n) => n.id);
-            setSelected(newSelected);
-            return;
-        }
-        
-        setSelected([]);
-    };
-    
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            await carStore.index();
-            setRows(carStore.cars);
-            setLoading(false);
-        })();
-    }, []);
-    
-    if (isLoading) {
-        return <Loader/>;
-    }
-    
     
     return (
         <Box>

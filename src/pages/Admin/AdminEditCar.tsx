@@ -42,18 +42,17 @@ const AdminEditCar: FC = () => {
         (async () => {
             setLoading(true);
             
-            await carModelStore.index();
-            await carClassStore.index();
-            await salonStore.index();
-            
             const response = await carStore.show(Number(id));
             if (response) {
                 setCredentials((({id, ...response}) => response)(response));
             }
             
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
+            await carModelStore.index();
+            await carClassStore.index();
+            await salonStore.index();
+            
+            alert(JSON.stringify(credentials, null, 4));
+            setLoading(false);
         })();
     }, []);
     
