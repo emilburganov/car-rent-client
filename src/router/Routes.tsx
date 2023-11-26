@@ -1,9 +1,10 @@
 import AdminAddCar from "@/pages/Admin/Cars/AdminAddCar.tsx";
 import AdminCars from "@/pages/Admin/Cars/AdminCars.tsx";
 import AdminEditCar from "@/pages/Admin/Cars/AdminEditCar.tsx";
-import AdminAddRent from "@/pages/Admin/Rent/AdminAddRent.tsx";
-import AdminEditRent from "@/pages/Admin/Rent/AdminEditRent.tsx";
-import AdminRentals from "@/pages/Admin/Rent/AdminRentals.tsx";
+import AdminAddRent from "@/pages/Admin/Rentals/AdminAddRent.tsx";
+import AdminEditRent from "@/pages/Admin/Rentals/AdminEditRent.tsx";
+import AdminRentals from "@/pages/Admin/Rentals/AdminRentals.tsx";
+import AdminUsers from "@/pages/Admin/Users/AdminUsers.tsx";
 import Login from "@/pages/Auth/Login.tsx";
 import Register from "@/pages/Auth/Register.tsx";
 import Home from "@/pages/Сommon/Home.tsx";
@@ -27,4 +28,5 @@ export const adminRoutes = [
     {path: "/rentals", element: <AdminRentals/>},
     {path: "/add-rent", element: <AdminAddRent/>},
     {path: "/edit-rent/:id", element: <AdminEditRent/>},
+    {path: "/users", element: <AdminUsers/>},
 ];

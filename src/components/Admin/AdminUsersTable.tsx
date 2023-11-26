@@ -1,4 +1,4 @@
-import {ICar} from "@/api/models/ICar.ts";
+import {IUser} from "@/api/models/IUser.ts";
 import Loader from "@/components/UI/Loader.tsx";
 import useStores from "@/hooks/useStores.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -6,7 +6,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import {alpha, InputBase, styled} from "@mui/material";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
@@ -22,7 +21,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {visuallyHidden} from "@mui/utils";
 import {ChangeEvent, Dispatch, FC, MouseEvent, SetStateAction, useEffect, useMemo, useState} from "react";
-import {useNavigate} from "react-router-dom";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
     if (b[orderBy] < a[orderBy]) {
@@ -64,7 +62,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 
 interface HeadCell {
     disablePadding: boolean;
-    id: keyof ICar;
+    id: keyof IUser;
     label: string;
     numeric: boolean;
 }
@@ -77,16 +75,16 @@ const headCells: readonly HeadCell[] = [
         label: "ID",
     },
     {
-        id: "car_model",
+        id: "login",
         numeric: true,
         disablePadding: false,
-        label: "CarModel",
+        label: "Login",
     },
     {
-        id: "year",
+        id: "surname",
         numeric: true,
         disablePadding: false,
-        label: "Year",
+        label: "Surname",
     },
     {
         id: "name",
@@ -95,34 +93,22 @@ const headCells: readonly HeadCell[] = [
         label: "Name",
     },
     {
-        id: "consumption",
+        id: "patronymic",
         numeric: true,
         disablePadding: false,
-        label: "Consumption",
+        label: "Patronymic",
     },
     {
-        id: "horsepower",
+        id: "role",
         numeric: true,
         disablePadding: false,
-        label: "Horsepower",
-    },
-    {
-        id: "car_class",
-        numeric: true,
-        disablePadding: false,
-        label: "CarClass",
-    },
-    {
-        id: "salon",
-        numeric: true,
-        disablePadding: false,
-        label: "Salon",
+        label: "Role",
     },
 ];
 
 interface EnhancedTableProps {
     numSelected: number;
-    onRequestSort: (property: keyof ICar) => void;
+    onRequestSort: (property: keyof IUser) => void;
     onSelectAllClick: (event: ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
@@ -133,7 +119,7 @@ const EnhancedTableHead: FC<EnhancedTableProps> = (props) => {
     const {onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} =
         props;
     const createSortHandler =
-        (property: keyof ICar) => () => {
+        (property: keyof IUser) => () => {
             onRequestSort(property);
         };
     
@@ -178,7 +164,7 @@ const EnhancedTableHead: FC<EnhancedTableProps> = (props) => {
 };
 
 interface EnhancedTableToolbarProps {
-    setRows: Dispatch<SetStateAction<ICar[]>>;
+    setRows: Dispatch<SetStateAction<IUser[]>>;
     selected: number[];
     setSelected: Dispatch<SetStateAction<number[]>>;
 }
@@ -228,23 +214,22 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
     
     const [search, setSearch] = useState("");
     let numSelected = selected.length;
-    const {carStore} = useStores();
-    const navigate = useNavigate();
+    const {userStore} = useStores();
     
     const handleDelete = async () => {
         selected.forEach((id) => {
-            carStore.destroy(id);
+            userStore.destroy(id);
         });
         
-        setRows(carStore.cars.filter((car) => !selected.includes(car.id)));
+        setRows(userStore.users.filter((user) => !selected.includes(user.id)));
         setSelected([]);
     };
     
     const handleSearch = async (event: ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
         
-        await carStore.index(event.target.value);
-        setRows(carStore.cars);
+        await userStore.index(event.target.value);
+        setRows(userStore.users);
     };
     
     return (
@@ -271,16 +256,9 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
                     id="tableTitle"
                     component="div"
                 >
-                    Cars
+                    Users
                 </Typography>
             )}
-            <Button
-                sx={{maxWidth: "fit-content", width: "100%"}}
-                variant="outlined"
-                onClick={() => navigate("/add-car")}
-            >
-                Add Cars
-            </Button>
             <Search>
                 <SearchIconWrapper>
                     <SearchIcon/>
@@ -310,16 +288,15 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
 };
 
 const AdminCarsTable: FC = () => {
-    const navigate = useNavigate();
     const [order, setOrder] = useState<Order>("asc");
-    const [orderBy, setOrderBy] = useState<keyof ICar>("id");
+    const [orderBy, setOrderBy] = useState<keyof IUser>("id");
     const [selected, setSelected] = useState<number[]>([]);
     
-    const {carStore} = useStores();
-    let [rows, setRows] = useState<ICar[]>(carStore.cars);
+    const {userStore} = useStores();
+    let [rows, setRows] = useState<IUser[]>(userStore.users);
     const [isLoading, setLoading] = useState<boolean>(false);
     
-    const handleRequestSort = (property: keyof ICar) => {
+    const handleRequestSort = (property: keyof IUser) => {
         const isAsc = orderBy === property && order === "asc";
         
         setOrder(isAsc ? "desc" : "asc");
@@ -346,8 +323,8 @@ const AdminCarsTable: FC = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            await carStore.index();
-            setRows(carStore.cars);
+            await userStore.index();
+            setRows(userStore.users);
             setLoading(false);
         })();
     }, []);
@@ -355,10 +332,6 @@ const AdminCarsTable: FC = () => {
     if (isLoading) {
         return <Loader/>;
     }
-    
-    const handleClick = (id: number) => {
-        navigate(`/edit-car/${id}`);
-    };
     
     const handleSelect = (event: MouseEvent<HTMLButtonElement>, id: number) => {
         event.stopPropagation();
@@ -410,7 +383,6 @@ const AdminCarsTable: FC = () => {
                                 
                                 return (
                                     <TableRow
-                                        onClick={() => handleClick(row.id)}
                                         hover
                                         role="checkbox"
                                         aria-checked={isItemSelected}
@@ -439,13 +411,11 @@ const AdminCarsTable: FC = () => {
                                         >
                                             {row.id}
                                         </TableCell>
-                                        <TableCell align="right">{row.car_model}</TableCell>
-                                        <TableCell align="right">{row.year}</TableCell>
+                                        <TableCell align="right">{row.login}</TableCell>
                                         <TableCell align="right">{row.name}</TableCell>
-                                        <TableCell align="right">{row.consumption}</TableCell>
-                                        <TableCell align="right">{row.horsepower}</TableCell>
-                                        <TableCell align="right">{row.car_class}</TableCell>
-                                        <TableCell align="right">{row.salon}</TableCell>
+                                        <TableCell align="right">{row.surname}</TableCell>
+                                        <TableCell align="right">{row.patronymic}</TableCell>
+                                        <TableCell align="right">{row.role}</TableCell>
                                     </TableRow>
                                 );
                             })}
