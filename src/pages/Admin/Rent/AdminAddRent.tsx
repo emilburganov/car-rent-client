@@ -17,6 +17,7 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import {DatePicker} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import {FC, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
@@ -27,8 +28,8 @@ const AdminAddRent: FC = () => {
     const [credentials, setCredentials] = useState<RentCredentials>({
         car_id: 1,
         user_id: 1,
-        start: "",
-        end: "",
+        start: dayjs(),
+        end: dayjs().add(1, "week"),
     });
     
     const validationSchema = Yup.object({
@@ -43,23 +44,23 @@ const AdminAddRent: FC = () => {
             .required()
             .label("Client"),
         start: Yup
-            .date()
+            .mixed()
             .required()
             .label("Start Date"),
         end: Yup
-            .date()
+            .mixed()
             .required()
             .label("End Date"),
     });
-    
     const {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<RentCredentials>({
+    } = useForm({
         resolver: yupResolver(validationSchema),
     });
     
+    const [dateError, setDateError] = useState<boolean>(false);
     const [isLoading, setLoading] = useState<boolean>(false);
     const {
         carStore,
@@ -176,13 +177,13 @@ const AdminAddRent: FC = () => {
                         fullWidth
                     >
                         <DatePicker
-                            format="YYYY-MM-DD"
                             {...register("start")}
-                            onChange={(event) => {
-                                setCredentials({...credentials, start: event.target.value});
-                            }}
                             value={credentials.start}
+                            onChange={(newValue) =>
+                                setCredentials({...credentials, start: newValue})}
+                            disablePast
                             label="Start Date"
+                            onAccept={() => setDateError(false)}
                         />
                         {!!errors.start &&
 							<FormHelperText error>
@@ -194,15 +195,26 @@ const AdminAddRent: FC = () => {
                         error={!!errors.end}
                         margin="normal"
                         fullWidth
+                    
                     >
                         <DatePicker
-                            format="YYYY-MM-DD"
-                            {...register("end")}
-                            onChange={(event) => {
-                                setCredentials({...credentials, end: event.target.value});
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    variant: "outlined",
+                                    error: dateError,
+                                    helperText: dateError && "End Date must be after Start Date",
+                                },
                             }}
+                            {...register("end")}
                             value={credentials.end}
+                            onChange={(newValue) =>
+                                setCredentials({...credentials, end: newValue})}
+                            disablePast
+                            minDate={credentials.start}
                             label="End Date"
+                            onAccept={() => setDateError(false)}
+                            onError={() => setDateError(true)}
                         />
                         {!!errors.end &&
 							<FormHelperText error>

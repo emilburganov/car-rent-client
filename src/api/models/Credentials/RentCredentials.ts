@@ -1,6 +1,8 @@
+import {Dayjs} from "dayjs";
+
 export interface RentCredentials {
     car_id: number,
     user_id: number,
-    start: string,
-    end: string,
+    start: Dayjs | null,
+    end: Dayjs | null,
 }
