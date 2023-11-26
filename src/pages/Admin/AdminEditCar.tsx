@@ -38,7 +38,6 @@ const AdminEditCar: FC = () => {
         year: 2023,
     });
     
-    
     useEffect(() => {
         (async () => {
             setLoading(true);
