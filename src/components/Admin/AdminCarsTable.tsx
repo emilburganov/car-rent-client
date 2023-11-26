@@ -251,6 +251,7 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
     return (
         <Toolbar
             sx={{
+                marginTop: 4,
                 pl: {sm: 2},
                 pr: {xs: 1, sm: 1},
             }}

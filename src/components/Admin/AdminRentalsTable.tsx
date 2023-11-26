@@ -1,4 +1,4 @@
-import {ICar} from "@/api/models/ICar.ts";
+import {IRent} from "@/api/models/IRent.ts";
 import Loader from "@/components/UI/Loader.tsx";
 import useStores from "@/hooks/useStores.tsx";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -64,7 +64,7 @@ function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) 
 
 interface HeadCell {
     disablePadding: boolean;
-    id: keyof ICar;
+    id: keyof IRent;
     label: string;
     numeric: boolean;
 }
@@ -77,52 +77,34 @@ const headCells: readonly HeadCell[] = [
         label: "ID",
     },
     {
-        id: "car_model",
+        id: "car",
         numeric: true,
         disablePadding: false,
-        label: "CarModel",
+        label: "Car",
     },
     {
-        id: "year",
+        id: "client",
         numeric: true,
         disablePadding: false,
-        label: "Year",
+        label: "Client",
     },
     {
-        id: "name",
+        id: "start",
         numeric: true,
         disablePadding: false,
-        label: "Name",
+        label: "Start Date",
     },
     {
-        id: "consumption",
+        id: "end",
         numeric: true,
         disablePadding: false,
-        label: "Consumption",
-    },
-    {
-        id: "horsepower",
-        numeric: true,
-        disablePadding: false,
-        label: "Horsepower",
-    },
-    {
-        id: "car_class",
-        numeric: true,
-        disablePadding: false,
-        label: "CarClass",
-    },
-    {
-        id: "salon",
-        numeric: true,
-        disablePadding: false,
-        label: "Salon",
+        label: "End Date",
     },
 ];
 
 interface EnhancedTableProps {
     numSelected: number;
-    onRequestSort: (property: keyof ICar) => void;
+    onRequestSort: (property: keyof IRent) => void;
     onSelectAllClick: (event: ChangeEvent<HTMLInputElement>) => void;
     order: Order;
     orderBy: string;
@@ -133,7 +115,7 @@ const EnhancedTableHead: FC<EnhancedTableProps> = (props) => {
     const {onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort} =
         props;
     const createSortHandler =
-        (property: keyof ICar) => () => {
+        (property: keyof IRent) => () => {
             onRequestSort(property);
         };
     
@@ -178,7 +160,7 @@ const EnhancedTableHead: FC<EnhancedTableProps> = (props) => {
 };
 
 interface EnhancedTableToolbarProps {
-    setRows: Dispatch<SetStateAction<ICar[]>>;
+    setRows: Dispatch<SetStateAction<IRent[]>>;
     selected: number[];
     setSelected: Dispatch<SetStateAction<number[]>>;
 }
@@ -228,29 +210,30 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
     
     const [search, setSearch] = useState("");
     let numSelected = selected.length;
-    const {carStore} = useStores();
+    const {rentStore} = useStores();
     const navigate = useNavigate();
     
     const handleDelete = async () => {
         selected.forEach((id) => {
-            carStore.destroy(id);
+            rentStore.destroy(id);
         });
         
-        setRows(carStore.cars.filter((car) => !selected.includes(car.id)));
+        setRows(rentStore.rentals.filter((rent) => !selected.includes(rent.id)));
         setSelected([]);
     };
     
     const handleSearch = async (event: ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
         
-        await carStore.index(event.target.value);
-        setRows(carStore.cars);
+        await rentStore.index(event.target.value);
+        setRows(rentStore.rentals);
     };
     
     
     return (
         <Toolbar
             sx={{
+                marginTop: 4,
                 pl: {sm: 2},
                 pr: {xs: 1, sm: 1},
             }}
@@ -271,15 +254,15 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
                     id="tableTitle"
                     component="div"
                 >
-                    Cars
+                    Rentals
                 </Typography>
             )}
             <Button
                 sx={{maxWidth: "fit-content", width: "100%"}}
                 variant="outlined"
-                onClick={() => navigate("/add-car")}
+                onClick={() => navigate("/add-rent")}
             >
-                Add Cars
+                Add Rental
             </Button>
             <Search>
                 <SearchIconWrapper>
@@ -309,17 +292,17 @@ const EnhancedTableToolbar: FC<EnhancedTableToolbarProps> = (props) => {
     );
 };
 
-const AdminCarsTable: FC = () => {
+const AdminRentalsTable: FC = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState<Order>("asc");
-    const [orderBy, setOrderBy] = useState<keyof ICar>("id");
+    const [orderBy, setOrderBy] = useState<keyof IRent>("id");
     const [selected, setSelected] = useState<number[]>([]);
     
-    const {carStore} = useStores();
-    let [rows, setRows] = useState<ICar[]>(carStore.cars);
+    const {rentStore} = useStores();
+    let [rows, setRows] = useState<IRent[]>(rentStore.rentals);
     const [isLoading, setLoading] = useState<boolean>(false);
     
-    const handleRequestSort = (property: keyof ICar) => {
+    const handleRequestSort = (property: keyof IRent) => {
         const isAsc = orderBy === property && order === "asc";
         
         setOrder(isAsc ? "desc" : "asc");
@@ -346,8 +329,8 @@ const AdminCarsTable: FC = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            await carStore.index();
-            setRows(carStore.cars);
+            await rentStore.index();
+            setRows(rentStore.rentals);
             setLoading(false);
         })();
     }, []);
@@ -357,7 +340,7 @@ const AdminCarsTable: FC = () => {
     }
     
     const handleClick = (id: number) => {
-        navigate(`/edit-car/${id}`);
+        navigate(`/edit-rent/${id}`);
     };
     
     const handleSelect = (event: MouseEvent<HTMLButtonElement>, id: number) => {
@@ -439,13 +422,10 @@ const AdminCarsTable: FC = () => {
                                         >
                                             {row.id}
                                         </TableCell>
-                                        <TableCell align="right">{row.car_model}</TableCell>
-                                        <TableCell align="right">{row.year}</TableCell>
-                                        <TableCell align="right">{row.name}</TableCell>
-                                        <TableCell align="right">{row.consumption}</TableCell>
-                                        <TableCell align="right">{row.horsepower}</TableCell>
-                                        <TableCell align="right">{row.car_class}</TableCell>
-                                        <TableCell align="right">{row.salon}</TableCell>
+                                        <TableCell align="right">{row.car}</TableCell>
+                                        <TableCell align="right">{row.client}</TableCell>
+                                        <TableCell align="right">{row.start}</TableCell>
+                                        <TableCell align="right">{row.end}</TableCell>
                                     </TableRow>
                                 );
                             })}
@@ -457,4 +437,4 @@ const AdminCarsTable: FC = () => {
     );
 };
 
-export default AdminCarsTable;
+export default AdminRentalsTable;
